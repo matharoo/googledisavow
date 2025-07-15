@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL to Disavow Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 URL to Disavow Converter</h1>
+            <p>Convert your list of URLs to Google Search Console disavow format</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <h2>Input URLs</h2>
+                <div class="input-options">
+                    <button id="pasteBtn" class="btn btn-primary">📋 Paste URLs</button>
+                    <button id="uploadBtn" class="btn btn-secondary">📁 Upload File</button>
+                    <input type="file" id="fileInput" accept=".txt,.csv" style="display: none;">
+                </div>
+                
+                <div class="textarea-container">
+                    <textarea 
+                        id="urlInput" 
+                        placeholder="Paste your URLs here, one per line:
+https://example1.com/page1
+https://www.example2.com/blog/post
+http://subdomain.example3.com
+example4.com/contact
+
+Or upload a text file with URLs..."
+                    ></textarea>
+                    <div class="textarea-footer">
+                        <span id="urlCount">0 URLs detected</span>
+                        <button id="clearBtn" class="btn btn-small">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="convert-section">
+                <button id="convertBtn" class="btn btn-convert">🔄 Convert to Disavow Format</button>
+            </div>
+
+            <div class="output-section" id="outputSection" style="display: none;">
+                <h2>Disavow Format Output</h2>
+                <div class="output-container">
+                    <textarea id="disavowOutput" readonly placeholder="Converted disavow format will appear here..."></textarea>
+                    <div class="output-footer">
+                        <span id="domainCount">0 domains extracted</span>
+                        <button id="copyBtn" class="btn btn-small">📋 Copy</button>
+                        <button id="downloadBtn" class="btn btn-small">💾 Download</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>This tool extracts the main domain from URLs and formats them for Google Search Console disavow files.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
