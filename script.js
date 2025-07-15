@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlInput = document.getElementById('urlInput');
     const disavowOutput = document.getElementById('disavowOutput');
     const outputSection = document.getElementById('outputSection');
+    const summarySection = document.getElementById('summarySection');
     const convertBtn = document.getElementById('convertBtn');
     const copyBtn = document.getElementById('copyBtn');
     const downloadBtn = document.getElementById('downloadBtn');
@@ -12,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
     const urlCount = document.getElementById('urlCount');
     const domainCount = document.getElementById('domainCount');
+    const totalUrls = document.getElementById('totalUrls');
+    const uniqueDomains = document.getElementById('uniqueDomains');
+    const duplicates = document.getElementById('duplicates');
+    const topDomains = document.getElementById('topDomains');
 
     // Event listeners
     convertBtn.addEventListener('click', convertUrls);
@@ -89,30 +94,41 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const domains = new Set();
+        const domainCounts = {};
         const invalidUrls = [];
+        const allDomains = [];
 
         urls.forEach(url => {
             const domain = extractDomain(url);
             if (domain) {
-                domains.add(domain);
+                allDomains.push(domain);
+                domainCounts[domain] = (domainCounts[domain] || 0) + 1;
             } else {
                 invalidUrls.push(url);
             }
         });
 
+        // Get unique domains
+        const uniqueDomains = Object.keys(domainCounts);
+        const totalUrls = allDomains.length;
+        const duplicateCount = totalUrls - uniqueDomains.length;
+
+        // Update summary section
+        updateSummary(domainCounts, totalUrls, duplicateCount);
+
         // Convert to disavow format
-        const disavowFormat = Array.from(domains)
+        const disavowFormat = uniqueDomains
             .sort()
             .map(domain => `domain:${domain}`)
             .join('\n');
 
-        // Update output
+        // Update output (clean disavow format only)
         disavowOutput.value = disavowFormat;
-        domainCount.textContent = `${domains.size} domains extracted`;
+        domainCount.textContent = `${uniqueDomains.length} unique domains extracted (${duplicateCount} duplicates removed)`;
         
-        // Show output section
+        // Show output and summary sections
         outputSection.style.display = 'block';
+        summarySection.style.display = 'block';
         outputSection.classList.add('success');
 
         // Show warnings for invalid URLs
@@ -124,6 +140,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Scroll to output
         outputSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateSummary(domainCounts, totalUrls, duplicateCount) {
+        const uniqueDomains = Object.keys(domainCounts);
+        
+        // Update stats
+        totalUrls.textContent = totalUrls;
+        uniqueDomains.textContent = uniqueDomains.length;
+        duplicates.textContent = duplicateCount;
+        
+        // Sort domains by frequency (highest first)
+        const sortedDomains = uniqueDomains.sort((a, b) => domainCounts[b] - domainCounts[a]);
+        
+        // Get top 5 domains with most URLs
+        const top5Domains = sortedDomains.slice(0, 5);
+        
+        // Update top domains display
+        if (top5Domains.length > 0) {
+            topDomains.innerHTML = '<strong>Top domains:</strong><br>' + 
+                top5Domains.map((domain, index) => {
+                    const count = domainCounts[domain];
+                    const percentage = ((count / totalUrls) * 100).toFixed(1);
+                    return `<div class="domain-item">
+                        <span class="domain-name">${domain}</span>
+                        <span class="domain-count">${count} URLs (${percentage}%)</span>
+                    </div>`;
+                }).join('');
+        } else {
+            topDomains.innerHTML = '';
+        }
     }
 
     function copyToClipboard() {
@@ -171,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         urlInput.value = '';
         disavowOutput.value = '';
         outputSection.style.display = 'none';
+        summarySection.style.display = 'none';
         updateUrlCount();
         domainCount.textContent = '0 domains extracted';
     }

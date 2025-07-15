@@ -202,6 +202,52 @@ footer {
     }
 }
 
+/* Summary section */
+.summary-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
+}
+
+.summary-content {
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.summary-stats {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2d3748;
+}
+
+.summary-stats span {
+    color: #4299e1;
+}
+
+.summary-top-domains {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.summary-top-domains .domain-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+    padding: 2px 0;
+}
+
+.summary-top-domains .domain-name {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.summary-top-domains .domain-count {
+    color: #718096;
+    font-size: 0.8rem;
+}
+
 /* Success animation */
 .success {
     animation: successPulse 0.6s ease-out;
