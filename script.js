@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Get unique domains
         const uniqueDomains = Object.keys(domainCounts);
-        const totalUrls = allDomains.length;
-        const duplicateCount = totalUrls - uniqueDomains.length;
+        const totalUrlCount = allDomains.length;
+        const duplicateCount = totalUrlCount - uniqueDomains.length;
 
         // Update summary section
-        updateSummary(domainCounts, totalUrls, duplicateCount);
+        updateSummary(domainCounts, totalUrlCount, duplicateCount);
 
         // Convert to disavow format
         const disavowFormat = uniqueDomains
@@ -142,16 +142,16 @@ document.addEventListener('DOMContentLoaded', function() {
         outputSection.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function updateSummary(domainCounts, totalUrls, duplicateCount) {
-        const uniqueDomains = Object.keys(domainCounts);
+    function updateSummary(domainCounts, totalUrlCount, duplicateCount) {
+        const uniqueDomainsList = Object.keys(domainCounts);
         
         // Update stats
-        totalUrls.textContent = totalUrls;
-        uniqueDomains.textContent = uniqueDomains.length;
+        totalUrls.textContent = totalUrlCount;
+        uniqueDomains.textContent = uniqueDomainsList.length;
         duplicates.textContent = duplicateCount;
         
         // Sort domains by frequency (highest first)
-        const sortedDomains = uniqueDomains.sort((a, b) => domainCounts[b] - domainCounts[a]);
+        const sortedDomains = uniqueDomainsList.sort((a, b) => domainCounts[b] - domainCounts[a]);
         
         // Get top 5 domains with most URLs
         const top5Domains = sortedDomains.slice(0, 5);
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             topDomains.innerHTML = '<strong>Top domains:</strong><br>' + 
                 top5Domains.map((domain, index) => {
                     const count = domainCounts[domain];
-                    const percentage = ((count / totalUrls) * 100).toFixed(1);
+                    const percentage = ((count / totalUrlCount) * 100).toFixed(1);
                     return `<div class="domain-item">
                         <span class="domain-name">${domain}</span>
                         <span class="domain-count">${count} URLs (${percentage}%)</span>
