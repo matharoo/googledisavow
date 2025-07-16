@@ -126,6 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
         disavowOutput.value = disavowFormat;
         domainCount.textContent = `${uniqueDomains.length} unique domains extracted (${duplicateCount} duplicates removed)`;
         
+        // Track conversion event
+        trackConversion(totalUrlCount, uniqueDomains.length, duplicateCount);
+
         // Show output and summary sections
         outputSection.style.display = 'block';
         summarySection.style.display = 'block';
@@ -311,5 +314,86 @@ document.addEventListener('DOMContentLoaded', function() {
         if ((e.ctrlKey || e.metaKey) && e.key === 'v' && document.activeElement === urlInput) {
             setTimeout(updateUrlCount, 100);
         }
+    });
+
+    // Google Analytics Event Tracking Functions
+    function trackEvent(eventName, parameters = {}) {
+        if (typeof gtag !== 'undefined') {
+            gtag('event', eventName, parameters);
+        }
+    }
+
+    function trackButtonClick(buttonName, additionalParams = {}) {
+        trackEvent('button_click', {
+            button_name: buttonName,
+            ...additionalParams
+        });
+    }
+
+    function trackConversion(urlCount, uniqueDomains, duplicateCount) {
+        trackEvent('url_conversion', {
+            total_urls: urlCount,
+            unique_domains: uniqueDomains,
+            duplicates_removed: duplicateCount,
+            duplicate_percentage: ((duplicateCount / urlCount) * 100).toFixed(1)
+        });
+    }
+
+    function trackFileUpload(fileName, fileSize) {
+        trackEvent('file_upload', {
+            file_name: fileName,
+            file_size: fileSize
+        });
+    }
+
+    // Enhanced event listeners with analytics
+    convertBtn.addEventListener('click', function() {
+        trackButtonClick('convert');
+        convertUrls();
+    });
+
+    copyBtn.addEventListener('click', function() {
+        trackButtonClick('copy_output');
+        copyToClipboard();
+    });
+
+    downloadBtn.addEventListener('click', function() {
+        trackButtonClick('download_file');
+        downloadFile();
+    });
+
+    clearBtn.addEventListener('click', function() {
+        trackButtonClick('clear_input');
+        clearInput();
+    });
+
+    pasteBtn.addEventListener('click', function() {
+        trackButtonClick('paste_from_clipboard');
+        pasteFromClipboard();
+    });
+
+    uploadBtn.addEventListener('click', function() {
+        trackButtonClick('upload_file');
+        fileInput.click();
+    });
+
+    // Track file uploads
+    fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            trackFileUpload(file.name, file.size);
+            handleFileUpload(event);
+        }
+    });
+
+    // Track URL count changes
+    urlInput.addEventListener('input', function() {
+        const urlCount = urlInput.value.split('\n').filter(url => url.trim()).length;
+        if (urlCount > 0 && urlCount % 10 === 0) { // Track every 10 URLs
+            trackEvent('url_input_progress', {
+                url_count: urlCount
+            });
+        }
+        updateUrlCount();
     });
 }); 
